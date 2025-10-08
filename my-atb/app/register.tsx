@@ -1,5 +1,7 @@
 import {useMemo, useState} from 'react';
 import {Animated, KeyboardAvoidingView, Platform, SafeAreaView, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import {Image} from 'expo-image';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import ScrollView = Animated.ScrollView;
 
@@ -20,6 +22,7 @@ export default function RegisterScreen() {
         confirmPassword: '',
     });
     const [errors, setErrors] = useState<RegisterErrors>({});
+    const [selectedAsset, setSelectedAsset] = useState<ImagePicker.ImagePickerAsset | null>(null);
 
     const isValidEmail = (value: string) => {
         // Basic email check is sufficient for client-side validation
@@ -60,7 +63,37 @@ export default function RegisterScreen() {
         setErrors(nextErrors);
         const hasErrors = Object.keys(nextErrors).length > 0;
         if (!hasErrors) {
-            console.log('Registration attempt with:', form);
+            console.log('Registration attempt with:', {
+                ...form,
+                selectedFile: selectedAsset
+                    ? {
+                        uri: selectedAsset.uri,
+                        fileName: (selectedAsset as any).fileName ?? undefined,
+                        mimeType: selectedAsset.mimeType,
+                        width: selectedAsset.width,
+                        height: selectedAsset.height,
+                        fileSize: (selectedAsset as any).fileSize ?? undefined,
+                    }
+                    : null,
+            });
+        }
+    };
+
+    const onPickFile = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            setSelectedAsset(null);
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: false,
+            quality: 1,
+        });
+
+        if (!result.canceled && result.assets && result.assets.length > 0) {
+            setSelectedAsset(result.assets[0]);
         }
     };
 
@@ -138,6 +171,27 @@ export default function RegisterScreen() {
                             >
                                 <Text className="text-white font-bold text-lg text-center">Зареєструватися</Text>
                             </TouchableOpacity>
+
+                            <View className="mt-4" />
+
+                            <TouchableOpacity
+                                onPress={onPickFile}
+                                className="bg-gray-800 rounded-lg px-5 py-3"
+                            >
+                                <Text className="text-white font-bold text-lg text-center">Обрати файл з галереї</Text>
+                            </TouchableOpacity>
+
+                            {selectedAsset?.uri ? (
+                                <View className="mt-4 items-center">
+                                    <Image
+                                        source={{ uri: selectedAsset.uri }}
+                                        style={{ width: 120, height: 120, borderRadius: 8 }}
+                                    />
+                                    <Text className="text-black mt-2 text-center" numberOfLines={1}>
+                                        {(selectedAsset as any).fileName ?? selectedAsset.uri}
+                                    </Text>
+                                </View>
+                            ) : null}
                         </View>
                     </ScrollView>
                 </KeyboardAvoidingView>
