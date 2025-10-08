@@ -1,0 +1,10 @@
+npx create-expo-app@latest
+
+--------Run PowerShell on admin--------
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+choco -v
+
+choco install -y microsoft-openjdk17
+
+java --version
