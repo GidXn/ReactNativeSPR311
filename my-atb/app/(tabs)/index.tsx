@@ -20,14 +20,6 @@ export default function HomeScreen() {
         // console.log("Press button not found");
     }
 
-    const onPressLogin = () => {
-        router.push("/login");
-    }
-
-    const onPressRegister = () => {
-        router.push("/register");
-    }
-
     return (
         <>
             <SafeAreaProvider>
@@ -56,20 +48,6 @@ export default function HomeScreen() {
                                     onPress={onPressNotFound}
                                 >
                                     <Text className="text-white font-bold text-lg">{"Перехід на not found"}</Text>
-                                </TouchableOpacity>
-
-                                <TouchableOpacity
-                                    className={`bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800 `}
-                                    onPress={onPressLogin}
-                                >
-                                    <Text className="text-white font-bold text-lg">{"Перехід на вхід"}</Text>
-                                </TouchableOpacity>
-
-                                <TouchableOpacity
-                                    className={`bg-purple-700 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 focus:outline-none dark:focus:ring-purple-800 `}
-                                    onPress={onPressRegister}
-                                >
-                                    <Text className="text-white font-bold text-lg">{"Перехід на реєстрацію"}</Text>
                                 </TouchableOpacity>
 
                             </View>
