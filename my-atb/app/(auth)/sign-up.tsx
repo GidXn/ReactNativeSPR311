@@ -10,6 +10,8 @@ import { showMessage } from "react-native-flash-message";
 import {getFileFromUriAsync} from "@/utils/getFileFromUriAsync";
 import axios from "axios";
 import {serialize} from 'object-to-formdata';
+import { setToken } from "@/utils/auth";
+import { router } from "expo-router";
 
 const userInitState: IUserCreate = {
     email: '',
@@ -57,12 +59,17 @@ const SignUp = () => {
                 const url = "http://10.0.2.2:5165/api/account/register";
                 const formData = serialize(model)
                 console.log("Submit form-- url",  url);
-                await axios.post(url, formData,
+                const res = await axios.post(url, formData,
                     {
                         headers: {
                             'Content-Type': 'multipart/form-data'
                         }
                     });
+                // expect { Token: string }
+                if (res?.data?.Token) {
+                    setToken(res.data.Token);
+                    router.replace("/(tabs)/profile");
+                }
             }
             catch(ex) {
                 console.log("Submit form-- error", ex);
