@@ -7,6 +7,9 @@ import CustomButton from "@/components/custom-button";
 import {pickImage} from "@/utils/pickImage";
 import {useRouter} from "expo-router";
 import { showMessage } from "react-native-flash-message";
+import {getFileFromUriAsync} from "@/utils/getFileFromUriAsync";
+import axios from "axios";
+import {serialize} from 'object-to-formdata';
 
 const userInitState: IUserCreate = {
     email: '',
@@ -43,7 +46,31 @@ const SignUp = () => {
             });
             return;
         }
-        console.log("Submit form", user);
+        if(user.imageUrl) {
+            const fileImage =
+                await getFileFromUriAsync(user.imageUrl);
+            console.log("Submit form-- file",  fileImage);
+            try {
+                const model = {...user, imageFile: fileImage};
+                // const url = "https://spr311.itstep.click/api/account/register";
+                console.log("Submit form-- model",  model);
+                const url = "http://10.0.2.2:5165/api/account/register";
+                const formData = serialize(model)
+                console.log("Submit form-- url",  url);
+                await axios.post(url, formData,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    });
+            }
+            catch(ex) {
+                console.log("Submit form-- error", ex);
+            }
+
+        }
+
+        //console.log("Submit form", user);
     }
 
 
