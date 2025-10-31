@@ -10,10 +10,10 @@ echo Docker login...
 docker login
 
 echo Tagging Docker image api...
-docker tag spr311-api:latest novakvova/spr311-api:latest
+docker tag spr311-api:latest pifiho/spr311-api:latest
 
 echo Pushing Docker image api to repository...
-docker push novakvova/spr311-api:latest
+docker push pifiho/spr311-api:latest
 
 echo Done ---api---!
 pause
