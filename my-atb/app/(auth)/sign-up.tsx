@@ -12,8 +12,6 @@ import {getFileFromUriAsync} from "@/utils/getFileFromUriAsync";
 // import {serialize} from 'object-to-formdata';
 import {IRegisterRequest} from "@/types/account/IRegisterRequest";
 import {useRegisterMutation} from "@/services/apiAccount";
-import {useAppDispatch} from "@/store";
-import {login} from "@/store/authSlice";
 
 const userInitState: IUserCreate = {
     email: '',
@@ -38,7 +36,6 @@ const SignUp = () => {
     const [confirmPassword, setConfirmPassword] = useState<string>('');
 
     const router = useRouter();
-    const dispatch = useAppDispatch();
 
     const validationChange = (isValid: boolean, fieldKey: string) => {
         if (isValid && errors.includes(fieldKey)) {
@@ -63,9 +60,8 @@ const SignUp = () => {
             console.log("Submit form-- file",  fileImage);
             try {
                 const model : IRegisterRequest = {...user, imageFile: fileImage};
-                const {token} = await register(model).unwrap();
-                dispatch(login(token));
-                router.replace("/(tabs)/profile");
+                await register(model);
+                router.replace("/(auth)");
                 // const url = "https://spr311.itstep.click/api/account/register";
                 // console.log("Submit form-- model",  model);
                 // // const url = "http://10.0.2.2:5165/api/account/register";
