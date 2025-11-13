@@ -54,7 +54,7 @@ const SignIn = () => {
             } else {
                 const {token} = result.data;
                 dispatch(login(token));
-                //router.replace("/(auth)/sign-up");
+                router.replace("/(tabs)");
             }
             //console.log("Submit form-- result",  result);
             //

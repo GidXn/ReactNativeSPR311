@@ -14,5 +14,11 @@ public class UserMapper : Profile
 
         CreateMap<RegisterModel, UserEntity>()
             .ForMember(opt => opt.UserName, opt => opt.MapFrom(x => x.Email));
+
+        CreateMap<UserEntity, ProfileResponse>()
+            .ForMember(opt => opt.Roles, opt => opt.Ignore());
+
+        CreateMap<UserEntity, UserListItemResponse>()
+            .ForMember(opt => opt.Roles, opt => opt.Ignore());
     }
 }
