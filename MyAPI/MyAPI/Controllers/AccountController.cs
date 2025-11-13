@@ -6,7 +6,9 @@ using Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace MyAPI.Controllers;
 
@@ -76,6 +78,27 @@ public class AccountController(IJwtTokenService jwtTokenService,
         var response = mapper.Map<ProfileResponse>(user);
         var roles = await userManager.GetRolesAsync(user);
         response.Roles = roles.ToList();
+
+        return Ok(response);
+    }
+
+    [HttpGet]
+    [Authorize(Roles = Roles.Admin)]
+    public async Task<ActionResult<IEnumerable<UserListItemResponse>>> Users()
+    {
+        var users = await userManager.Users
+            .OrderByDescending(x => x.DateCreated)
+            .ToListAsync();
+
+        var response = new List<UserListItemResponse>(users.Count);
+
+        foreach (var user in users)
+        {
+            var item = mapper.Map<UserListItemResponse>(user);
+            var roles = await userManager.GetRolesAsync(user);
+            item.Roles = roles.ToList();
+            response.Add(item);
+        }
 
         return Ok(response);
     }
