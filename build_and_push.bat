@@ -10,10 +10,10 @@ echo Docker login...
 docker login
 
 echo Tagging Docker image api...
-docker tag spr311-api:latest GidXn/spr311-api:latest
+docker tag spr311-api:latest GidXn@ReactNativeSPR311/spr311-api:latest
 
 echo Pushing Docker image api to repository...
-docker push GidXn/spr311-api:latest
+docker push GidXn@ReactNativeSPR311/spr311-api:latest
 
 echo Done ---api---!
 pause

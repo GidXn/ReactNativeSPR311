@@ -6,7 +6,7 @@ import {showMessage} from "react-native-flash-message";
 import {useLoginMutation} from "@/services/apiAccount";
 import FormField from "@/components/form-fields";
 import CustomButton from "@/components/custom-button";
-import {login} from "@/store/authSlice";
+import {login, logout} from "@/store/authSlice";
 import {useAppDispatch, useAppSelector} from "@/store";
 
 
@@ -48,15 +48,27 @@ const SignIn = () => {
         }
 
         try {
-            const {token} = await loginPOST(form).unwrap();
-            dispatch(login(token));
-            router.replace("/(tabs)/profile");
+            const result = await loginPOST(form);
+            if (result.error) {
+                console.error("Problema with login", result.error);
+            } else {
+                const {token} = result.data;
+                dispatch(login(token));
+                //router.replace("/(auth)/sign-up");
+            }
+            //console.log("Submit form-- result",  result);
+            //
         } catch (ex) {
             console.log("Submit form-- error", ex);
-            showMessage({
-                message: "Не вдалося увійти. Перевірте дані та спробуйте ще раз.",
-                type: "danger",
-            });
+        }
+    }
+
+    const handleLogout = async () => {
+        try {
+            dispatch(logout());
+        }
+        catch (ex) {
+            console.log("Logout error", ex);
         }
     }
 
@@ -129,9 +141,16 @@ const SignIn = () => {
                         ]}
                     />
 
-                    <CustomButton title="Вхід" handlePress={submit}
-                                  isLoading={isLoading}
-                                  containerStyles="mt-7 w-full bg-slate-500 rounded-xl"/>
+                    { !user &&
+                        <CustomButton title="Вхід" handlePress={submit}
+                                      containerStyles="mt-7 w-full bg-slate-500 rounded-xl"/>
+                    }
+
+
+                    { user &&
+                        <CustomButton title="Вихід" handlePress={handleLogout}
+                                  containerStyles="mt-7 w-full bg-green-500 rounded-xl"/>
+                    }
 
                     <CustomButton title="Реєстрація" handlePress={() => {
                         router.replace("/(auth)/sign-up")
