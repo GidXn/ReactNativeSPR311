@@ -1,4 +1,4 @@
-import {deleteSecureStore, getSecureStore, saveSecureStore} from "@/utils/secureStore";
+import {deleteSecureStore, saveSecureStore} from "@/utils/secureStore";
 import {IUser} from "@/types/auth/IUser";
 import {jwtDecode} from "jwt-decode";
 import {IAuthState} from "@/types/auth/IAuthState";
@@ -31,13 +31,9 @@ export const getUserFromToken = (token: string): IUser | null => {
     }
 }
 
-const token = getSecureStore("token");
-
-const initUser = token ? getUserFromToken(token) : null;
-
 //Дані які будуть зебігатися про авторизованого користувача
 const initState: IAuthState = {
-    user: initUser,
+    user: null,
 }
 
 const authSlice = createSlice({

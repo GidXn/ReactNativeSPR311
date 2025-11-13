@@ -4,15 +4,15 @@ set -e
 
 server_up() {
     echo "Server up..."
-    docker pull novakvova/spr311-api:latest
+    docker pull GidXn/spr311-api:latest
     docker stop spr311-api_container || true
     docker rm spr311-api_container || true
-    docker run -d --restart=always -v /volumes/spr311-api/images:/app/images --name spr311-api_container -p 4378:8080 novakvova/spr311-api
+    docker run -d --restart=always -v /volumes/spr311-api/images:/app/images --name spr311-api_container -p 4378:8080 GidXn/spr311-api
 }
 
 start_containers() {
     echo "Containers start..."
-    docker run -d --restart=always -v /volumes/spr311-api/images:/app/images --name spr311-api_container -p 4378:8080 novakvova/spr311-api
+    docker run -d --restart=always -v /volumes/spr311-api/images:/app/images --name spr311-api_container -p 4378:8080 GidXn/spr311-api
 }
 
 stop_containers() {
@@ -25,7 +25,7 @@ restart_containers() {
     echo "Containers restart..."
     docker stop spr311-api_container || true
     docker rm spr311-api_container || true
-    docker run -d --restart=always -v /volumes/spr311-api/images:/app/images --name spr311-api_container -p 4378:8080 novakvova/spr311-api
+    docker run -d --restart=always -v /volumes/spr311-api/images:/app/images --name spr311-api_container -p 4378:8080 GidXn/spr311-api
 }
 
 echo "Choose action:"
