@@ -5,7 +5,6 @@ using Core.Models.Account;
 using Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 
 namespace MyAPI.Controllers;
 
@@ -15,18 +14,6 @@ public class AccountController(IJwtTokenService jwtTokenService,
         IMapper mapper, IImageService imageService,
         UserManager<UserEntity> userManager) : ControllerBase
 {
-    [HttpGet]
-    [Authorize]
-    public async Task<IActionResult> Me()
-    {
-        var user = await userManager.GetUserAsync(User);
-        if (user == null)
-            return Unauthorized();
-
-        var model = mapper.Map<ProfileModel>(user);
-        return Ok(model);
-    }
-
     [HttpPost]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {

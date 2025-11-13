@@ -14,7 +14,5 @@ public class UserMapper : Profile
 
         CreateMap<RegisterModel, UserEntity>()
             .ForMember(opt => opt.UserName, opt => opt.MapFrom(x => x.Email));
-
-        CreateMap<UserEntity, ProfileModel>();
     }
 }
