@@ -3,8 +3,11 @@ using Core.Constants;
 using Core.Interfaces;
 using Core.Models.Account;
 using Domain.Entities.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace MyAPI.Controllers;
 
@@ -53,5 +56,36 @@ public class AccountController(IJwtTokenService jwtTokenService,
                 errors = result.Errors.ToList()
             });
         }
+    }
+
+    [HttpGet]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> Profile()
+    {
+        var emailClaim = User.FindFirst("email")?.Value
+                         ?? User.FindFirst(ClaimTypes.Email)?.Value;
+
+        if (string.IsNullOrEmpty(emailClaim))
+        {
+            return Unauthorized("Email claim not found in token.");
+        }
+
+        var user = await userManager.FindByEmailAsync(emailClaim);
+        if (user == null)
+        {
+            return Unauthorized("User not found.");
+        }
+
+        var roles = await userManager.GetRolesAsync(user);
+
+        var response = new ProfileResponse
+        {
+            Email = user.Email ?? emailClaim,
+            FullName = $"{user.LastName} {user.FirstName}".Trim(),
+            Image = user.Image,
+            Roles = roles
+        };
+
+        return Ok(response);
     }
 }

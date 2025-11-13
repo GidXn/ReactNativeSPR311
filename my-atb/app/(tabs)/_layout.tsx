@@ -11,11 +11,19 @@ export default function TabLayout() {
 
   return (
     <Tabs
+      initialRouteName="profile"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
         tabBarButton: HapticTab,
       }}>
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.crop.circle" color={color} />,
+        }}
+      />
       <Tabs.Screen
         name="index"
         options={{
