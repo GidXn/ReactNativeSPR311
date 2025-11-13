@@ -8,10 +8,10 @@ import {pickImage} from "@/utils/pickImage";
 import {useRouter} from "expo-router";
 import { showMessage } from "react-native-flash-message";
 import {getFileFromUriAsync} from "@/utils/getFileFromUriAsync";
-import axios from "axios";
-import {serialize} from 'object-to-formdata';
-import { setToken } from "@/utils/auth";
-import { router } from "expo-router";
+// import axios from "axios";
+// import {serialize} from 'object-to-formdata';
+import {IRegisterRequest} from "@/types/account/IRegisterRequest";
+import {useRegisterMutation} from "@/services/apiAccount";
 
 const userInitState: IUserCreate = {
     email: '',
@@ -23,6 +23,12 @@ const userInitState: IUserCreate = {
 
 
 const SignUp = () => {
+
+    const [register, {isLoading, error: registerError}] = useRegisterMutation();
+    //Метод register - для реєстрації
+    //boolean isLoading - Для відслідковування запиту
+    //error - об'єкт, який містить помилки
+    // console.log("Register", isLoading, registerError);
     //Зберігає дані користувача
     const [user, setUser] = useState<IUserCreate>(userInitState);
     //Зберігає помилки
@@ -53,23 +59,20 @@ const SignUp = () => {
                 await getFileFromUriAsync(user.imageUrl);
             console.log("Submit form-- file",  fileImage);
             try {
-                const model = {...user, imageFile: fileImage};
+                const model : IRegisterRequest = {...user, imageFile: fileImage};
+                await register(model);
+                router.replace("/(auth)");
                 // const url = "https://spr311.itstep.click/api/account/register";
-                console.log("Submit form-- model",  model);
-                const url = "http://10.0.2.2:5165/api/account/register";
-                const formData = serialize(model)
-                console.log("Submit form-- url",  url);
-                const res = await axios.post(url, formData,
-                    {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    });
-                // expect { Token: string }
-                if (res?.data?.Token) {
-                    setToken(res.data.Token);
-                    router.replace("/(tabs)/profile");
-                }
+                // console.log("Submit form-- model",  model);
+                // // const url = "http://10.0.2.2:5165/api/account/register";
+                // const formData = serialize(model)
+                // console.log("Submit form-- url",  url);
+                // await axios.post(url, formData,
+                //     {
+                //         headers: {
+                //             'Content-Type': 'multipart/form-data'
+                //         }
+                //     });
             }
             catch(ex) {
                 console.log("Submit form-- error", ex);
