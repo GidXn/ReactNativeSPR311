@@ -1,15 +1,17 @@
 import {configureStore} from "@reduxjs/toolkit";
 import {apiAccount} from "@/services/apiAccount";
+import {apiNoteCategories} from "@/services/apiNoteCategories";
 import authReducer from "./authSlice";
 import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
 
 export const store = configureStore({
     reducer: {
         [apiAccount.reducerPath]: apiAccount.reducer,
+        [apiNoteCategories.reducerPath]: apiNoteCategories.reducer,
         auth: authReducer
     },
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(apiAccount.middleware),
+        getDefaultMiddleware().concat(apiAccount.middleware, apiNoteCategories.middleware),
 });
 //Типи які знаходяться у Redux
 export type RootState = ReturnType<typeof store.getState>;
