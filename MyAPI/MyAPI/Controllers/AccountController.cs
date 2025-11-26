@@ -3,20 +3,18 @@ using Core.Constants;
 using Core.Interfaces;
 using Core.Models.Account;
 using Domain.Entities.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Collections.Generic;
-
 namespace MyAPI.Controllers;
 
 [Route("api/[controller]/[action]")]
 [ApiController]
 public class AccountController(IJwtTokenService jwtTokenService,
         IMapper mapper, IImageService imageService,
-        UserManager<UserEntity> userManager) : ControllerBase
+        UserManager<UserEntity> userManager,
+        IUserService userService,
+        IAuthService authService) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
@@ -31,6 +29,7 @@ public class AccountController(IJwtTokenService jwtTokenService,
     }
 
     [HttpPost]
+    //[Authorize(Roles=$"{Roles.Admin}")]
     public async Task<IActionResult> Register([FromForm] RegisterModel model)
     {
         var request = Request;
@@ -61,45 +60,10 @@ public class AccountController(IJwtTokenService jwtTokenService,
 
     [HttpGet]
     [Authorize]
-    public async Task<ActionResult<ProfileResponse>> Profile()
+    public async Task<IActionResult> Profile()
     {
-        var email = User.Claims.FirstOrDefault(claim => claim.Type == "email")?.Value;
-        if (string.IsNullOrEmpty(email))
-        {
-            return Unauthorized();
-        }
-
-        var user = await userManager.FindByEmailAsync(email);
-        if (user is null)
-        {
-            return NotFound();
-        }
-
-        var response = mapper.Map<ProfileResponse>(user);
-        var roles = await userManager.GetRolesAsync(user);
-        response.Roles = roles.ToList();
-
-        return Ok(response);
-    }
-
-    [HttpGet]
-    [Authorize(Roles = Roles.Admin)]
-    public async Task<ActionResult<IEnumerable<UserListItemResponse>>> Users()
-    {
-        var users = await userManager.Users
-            .OrderByDescending(x => x.DateCreated)
-            .ToListAsync();
-
-        var response = new List<UserListItemResponse>(users.Count);
-
-        foreach (var user in users)
-        {
-            var item = mapper.Map<UserListItemResponse>(user);
-            var roles = await userManager.GetRolesAsync(user);
-            item.Roles = roles.ToList();
-            response.Add(item);
-        }
-
-        return Ok(response);
+        var userId = await authService.GetUserIdAsync();
+        var userInfo = await userService.GetUserByIdAsync(userId);
+        return Ok(userInfo);
     }
 }

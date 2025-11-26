@@ -1,4 +1,5 @@
-﻿using Domain.Entities.Identity;
+﻿using Domain.Entities;
+using Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,11 @@ public class AppDbContext : IdentityDbContext<UserEntity, RoleEntity, long,
         IdentityRoleClaim<long>, IdentityUserToken<long>>
 {
     public AppDbContext(DbContextOptions<AppDbContext> opt) : base(opt) { }
+
+    public DbSet<NoteCategoryEntity> NoteCategories { get; set; }
+    public DbSet<PostEntity> Posts { get; set; }
+    public DbSet<NoteEntity> Notes { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
