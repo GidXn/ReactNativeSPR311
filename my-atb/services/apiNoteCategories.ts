@@ -20,9 +20,27 @@ export const apiNoteCategories = createApi({
             }),
             providesTags: ["NoteCategories"]
         }),
+        create: builder.mutation<INoteCategoryItem, { name: string; image: any }>({ // image: File | Blob | undefined
+            query: ({name, image}) => {
+                const formData = new FormData();
+                formData.append("Name", name);
+                if (image) {
+                    formData.append("Image", image);
+                }
+                return {
+                    url: "Create",
+                    method: "POST",
+                    body: formData
+                };
+            },
+            invalidatesTags: ["NoteCategories"]
+        }),
     }),
 });
 
-export const {useListQuery: useNoteCategoriesListQuery} = apiNoteCategories;
+export const {
+    useListQuery: useNoteCategoriesListQuery,
+    useCreateMutation: useCreateNoteCategoryMutation
+} = apiNoteCategories;
 
 
