@@ -21,4 +21,5 @@ public class NoteCategoryEntity
     [ForeignKey(nameof(User))]
     public long UserId { get; set; }
     public virtual UserEntity? User { get; set; }
+    public virtual ICollection<NoteEntity>? Notes { get; set; }
 }

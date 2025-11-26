@@ -14,6 +14,7 @@ public class AppDbContext : IdentityDbContext<UserEntity, RoleEntity, long,
 
     public DbSet<NoteCategoryEntity> NoteCategories { get; set; }
     public DbSet<PostEntity> Posts { get; set; }
+    public DbSet<NoteEntity> Notes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
