@@ -3,13 +3,16 @@ using Core.Models.Account;
 using Core.Services;
 using Domain;
 using Domain.Entities.Identity;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MyAPI;
+using MyAPI.Filters;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -87,11 +90,27 @@ builder.Services.AddSwaggerGen(opt =>
 
 });
 
-builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddHttpClient();
 
+builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<INoteCategoryService, NoteCategoryService>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
+
+builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddMvc(options =>
+{
+    options.Filters.Add<ValidationFilter>();
+});
 
 builder.Services.AddCors();
 
